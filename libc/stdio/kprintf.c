@@ -93,6 +93,45 @@ int kprintf(multiboot_info_t* mbi, const char* restrict format, ...)
 
             written += length;
         }
+        else if ((*format == 'x') || (*format == 'X'))
+        {
+            bool upper = (*format == 'X');
+
+            format++;
+            unsigned int value = va_arg(args, unsigned int);
+
+            char buf[32] = {[31] = 0};
+            int i = 30;
+
+            if (value)
+            {
+                if (upper)
+                    for (; value && i; i--, value /= 16)
+                        buf[i] = hex_upper[value % 16];
+                else
+                    for (; value && i; i--, value /= 16)
+                        buf[i] = hex_lower[value % 16];
+            }
+            else
+            {
+                buf[i] = '0';
+                i--;
+            }
+            
+            char* intstr = &buf[i + 1];
+            size_t length = strlen(intstr);
+
+            if (length > max_chars)
+            {
+                // Overflow
+                return -1;
+            }
+            
+            if (!print(intstr, length, mbi))
+                return -1;
+            
+            written += length;
+        }
         else if (*format == 'd')
         {
             format++;
