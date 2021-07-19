@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
 
 #include <kernel/tty.h>
 #include <kernel/mb.h>
@@ -21,6 +20,6 @@ void kmain(unsigned long mb_mag, unsigned long mb_addr)
 
     // Default colors: fg = 0xAAAAAA, bg = 0x000000
     // Test message
-    kprintf(mbi, "\"Project Bumblebee\" Version 0.0.0.3\n");
-    kprintf(mbi, "\nLogin placeholder. Now contains integer printing and math library.\n\n");
+    kprintf(mbi, "\"Project Bumblebee\" Version 0.0.0.4\n");
+    kprintf(mbi, "\nLogin placeholder. Now contains hex printing.\n\n");
 }
