@@ -132,6 +132,71 @@ int kprintf(multiboot_info_t* mbi, const char* restrict format, ...)
             
             written += length;
         }
+        else if (*format == 'f')
+        {
+            format++;
+            double flvalue = va_arg(args, double);
+            int ivalue = (int) flvalue;
+
+            int8_t greatest_power = 0; // Greatest power of 10 smaller than flvalue
+
+            while (ivalue)
+            {
+                ivalue /= 10;
+                greatest_power++;
+            }
+
+            int64_t value = flvalue * (double) ipow(10, 8);
+
+            char buf[32] = {[31] = 0};
+            int i = 30;
+
+            bool isneg = (value < 0);
+
+            if (isneg)
+                value = -value;
+            
+            if (value)
+            {
+                for (; value && i; i--, value /= 10)
+                {
+                    if (i == 22)
+                    {
+                        buf[i] = '.';
+                        i--;
+                        break;
+                    }
+                    buf[i] = dec[value % 10];
+                }
+                for (; value && i; i--, value /= 10)
+                    buf[i] = dec[value % 10];
+            }
+            else
+            {
+                buf[i] = '0';
+                i--;
+            }
+            
+            if (isneg)
+            {
+                buf[i] = '-';
+                i--;
+            }
+            
+            char* intstr = &buf[i + 1];
+            size_t length = strlen(intstr);
+
+            if (length > max_chars)
+            {
+                // Overflow
+                return -1;
+            }
+            
+            if (!print(intstr, length, mbi))
+                return -1;
+            
+            written += length;
+        }
         else if (*format == 'd')
         {
             format++;
