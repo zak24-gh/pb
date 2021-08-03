@@ -1,14 +1,16 @@
 #ifndef _MATH_H
 #define _MATH_H
 
+#define E (2.7182818284590452)
+#define PI (3.1415936535897932)
+
 #include <stdint.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-// Returns absolute value of x
-static inline double abs(int x)
+static inline double abs(double x)
 {
     return (x >= 0) ? x : -x;
 }
