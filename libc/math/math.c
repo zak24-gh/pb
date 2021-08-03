@@ -110,7 +110,7 @@ double exp(double x)
         crnt_exp++;
     }
 
-    while ((abs(x - ln(power)) > epsilon) || (power == x))
+    while (abs(x - ln(power)) > epsilon)
     {
         crnt_exp--;
 
