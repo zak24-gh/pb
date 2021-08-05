@@ -21,6 +21,7 @@ void kmain(unsigned long mb_mag, unsigned long mb_addr)
 
     // Default colors: fg = 0xAAAAAA, bg = 0x000000
     // Test message
-    kprintf(mbi, "\"Project Bumblebee\" Version 0.0.0.6\n");
-    kprintf(mbi, "\nLogin placeholder. Floats/doubles supported; further patches required for math library.\n\n");
+    double d = 0.12345678;
+    kprintf(mbi, "\"Project Bumblebee\" Version 0.0.0.7\n");
+    kprintf(mbi, "\nLogin placeholder. Floats/doubles supported; further patches required for math library. %f\n\n", d);
 }
