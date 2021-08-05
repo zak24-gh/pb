@@ -136,25 +136,28 @@ int kprintf(multiboot_info_t* mbi, const char* restrict format, ...)
         {
             format++;
             double flvalue = va_arg(args, double);
-            int ivalue = (int) flvalue;
 
-            int8_t greatest_power = 0; // Greatest power of 10 smaller than flvalue
+            int64_t value = abs(flvalue) * (double) ipow(10, 8);
 
-            while (ivalue)
-            {
-                ivalue /= 10;
-                greatest_power++;
-            }
+            bool isneg = (flvalue < 0);
 
-            int64_t value = flvalue * (double) ipow(10, 8);
+            int ratio = (int) (ipow(10, 8) / value);
 
+            if (ratio % 10 == 0)
+                ratio -= 1;
+
+            int offset = 0;
+
+            if (ratio > 1)
+                while (ratio)
+                {
+                    offset++;
+                    ratio /= 10;
+                }
+
+            offset--;
             char buf[32] = {[31] = 0};
             int i = 30;
-
-            bool isneg = (value < 0);
-
-            if (isneg)
-                value = -value;
             
             if (value)
             {
@@ -170,11 +173,23 @@ int kprintf(multiboot_info_t* mbi, const char* restrict format, ...)
                 }
                 for (; value && i; i--, value /= 10)
                     buf[i] = dec[value % 10];
+                if (((0 < flvalue) && (flvalue < 1)) || ((0 > flvalue) && (flvalue > -1)))
+                {
+                    memmove(&buf[21], "0.", 2);
+                    i -= 2;
+                    if ((flvalue < 0.1) && (-0.1 < flvalue))
+                        while (offset)
+                        {
+                            buf[22 + offset] = '0';
+                            offset--;
+                            i--;
+                        }
+                }
             }
             else
             {
-                buf[i] = '0';
-                i--;
+                memmove(&buf[21], "0.00000000", 10);
+                i = 20;
             }
             
             if (isneg)
