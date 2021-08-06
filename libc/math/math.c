@@ -42,13 +42,13 @@ uint64_t fact(uint8_t x)
 double nrt(double x, double n)
 {
 	double _nrt = 0;
-	double current = 1.0;
+	double current = 1;
 	double epsilon = 0.0000000000000001;
     double diff = INT_MAX;
     double prev = 1;
 
 	if (x < 0)
-		return -1.0;
+		return -1;
 
 	while (diff >= epsilon)
 	{
@@ -66,7 +66,7 @@ double sqrt(double x)
 	return nrt(x, 2);
 }
 
-double log(double x)
+double log_hlpr(double x)
 {
     double current = x;
     double temp = current;
@@ -91,6 +91,14 @@ double log(double x)
     }
 
     return ans;
+}
+
+double log(double x)
+{
+    if (x <= 0)
+        return -1;
+    else
+        return (x < 1) ? -log_hlpr(1 / x) : log_hlpr(x);
 }
 
 double ln(double x)
