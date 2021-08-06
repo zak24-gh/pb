@@ -7,6 +7,7 @@
 #include <kernel/mb.h>
 #include <kernel/tty.h>
 
+// Constant character tables
 const char* hex_lower = "0123456789abcdef";
 const char* hex_upper = "0123456789ABCDEF";
 const char* dec = "0123456789";
@@ -59,6 +60,7 @@ int kprintf(multiboot_info_t* mbi, const char* restrict format, ...)
 
         const char* fmt_start = format++;
 
+        // Simplest printing task. Prints one character.
         if (*format == 'c')
         {
             format++;
@@ -75,6 +77,7 @@ int kprintf(multiboot_info_t* mbi, const char* restrict format, ...)
             
             written++;
         }
+        // Prints string. Fairly simple but requires strlen() use.
         else if (*format == 's')
         {
             format++;
@@ -93,6 +96,7 @@ int kprintf(multiboot_info_t* mbi, const char* restrict format, ...)
 
             written += length;
         }
+        // Prints hex characters from lowercase or UPPERCASE constant predefined list of characters
         else if ((*format == 'x') || (*format == 'X'))
         {
             bool upper = (*format == 'X');
@@ -103,6 +107,7 @@ int kprintf(multiboot_info_t* mbi, const char* restrict format, ...)
             char buf[32] = {[31] = 0};
             int i = 30;
 
+            // This algorithm uses simple division and modulus operations to print hex characters
             if (value)
             {
                 if (upper)
@@ -132,11 +137,21 @@ int kprintf(multiboot_info_t* mbi, const char* restrict format, ...)
             
             written += length;
         }
+        /* Prints floats by converting them to int64_t via multiplication.
+        One of the most complicated printing tasks. */
         else if (*format == 'f')
         {
             format++;
             double flvalue = va_arg(args, double);
             int64_t value = abs(flvalue) * (double) ipow(10, 8);
+
+            // Prevent overflow
+            if ((flvalue > 92233720368) || (flvalue < -92233720368))
+            {
+                value = 0;
+                flvalue = 0;
+            }
+
             bool isneg = (flvalue < 0);
             int ratio = (int) (ipow(10, 8) / value);
             int offset = 0;
@@ -152,6 +167,9 @@ int kprintf(multiboot_info_t* mbi, const char* restrict format, ...)
             char buf[32] = {[31] = 0};
             int i = 30;
             
+            /* This algorithm operates much the same as the hex algorithm,
+            only utilizing a decimal table in the process instead and using
+            the '.' radix point character. */
             if (value)
             {
                 for (; value && i; i--, value /= 10)
@@ -179,12 +197,14 @@ int kprintf(multiboot_info_t* mbi, const char* restrict format, ...)
                         }
                 }
             }
+            // Use memmove() to set the string for the value of 0
             else
             {
                 memmove(&buf[21], "0.00000000", 10);
                 i = 20;
             }
             
+            // Test for negative value
             if (isneg)
             {
                 buf[i] = '-';
@@ -216,6 +236,7 @@ int kprintf(multiboot_info_t* mbi, const char* restrict format, ...)
             if (isneg)
                 value = -value;
             
+            // This algorithm works very similarly to the previous two, but is much simpler
             if (value)
             {
                 for (; value && i; i--, value /= 10)
@@ -227,6 +248,7 @@ int kprintf(multiboot_info_t* mbi, const char* restrict format, ...)
                 i--;
             }
             
+            // Test for negative value
             if (isneg)
             {
                 buf[i] = '-';
@@ -255,6 +277,7 @@ int kprintf(multiboot_info_t* mbi, const char* restrict format, ...)
             char buf[32] = {[31] = 0};
             int i = 30;
 
+            // This algorithm is the exact same as the former, only with no negative value check
             if (value)
             {
                 for (; value && i; i--, value /= 10)
