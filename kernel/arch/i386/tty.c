@@ -34,6 +34,7 @@ void ttypixel(int x, int y, uint32_t color, uint8_t* fb)
     fb[loc + 3] = (color >> 24) & 0xFF;
 }
 
+// Find color value of position
 uint32_t inpixel(int x, int y, uint8_t* fb)
 {
     unsigned int loc = ((y * 4) * WIDTH) + (x * 4);
@@ -48,8 +49,8 @@ uint32_t inpixel(int x, int y, uint8_t* fb)
 // Clear screen
 void ttycls(uint8_t* fb)
 {
-    for (int x = 0; x < WIDTH; x++)
-        for (int y = 0; y < HEIGHT; y++)
+    for (size_t x = 0; x < WIDTH; x++)
+        for (size_t y = 0; y < HEIGHT; y++)
             ttypixel(x, y, 0x000000, fb);
 }
 
@@ -68,12 +69,12 @@ void ttyplace(unsigned short int ch, int chx, int chy, color_t color, multiboot_
 
     int line, mask;
 
-    for (int y = 0; y < font -> height; y++)
+    for (uint32_t y = 0; y < font -> height; y++)
     {
         line = offset;
         mask = 1 << ((font -> width) - 1);
 
-        for (int x = 0; x < font -> width; x++)
+        for (uint32_t x = 0; x < font -> width; x++)
         {
             *((pixel_t*) (fb + line)) = (*((unsigned int*) glyph) & mask) ? color.fg : color.bg;
             mask >>= 1;
@@ -100,12 +101,12 @@ void ttyinit(uint8_t* fb)
 // Scroll when tty is full
 void ttyscroll(uint8_t* fb)
 {
-    for (int y = 16; y < HEIGHT; y++)
-        for (int x = 0; x < WIDTH; x++)
+    for (size_t y = 16; y < HEIGHT; y++)
+        for (size_t x = 0; x < WIDTH; x++)
             ttypixel(x, y - 16, inpixel(x, y, fb), fb);
 
-    for (int lasty = HEIGHT - 16; lasty < HEIGHT; lasty++)
-        for (int lastx = 0; lastx < WIDTH; lastx++)
+    for (size_t lasty = HEIGHT - 16; lasty < HEIGHT; lasty++)
+        for (size_t lastx = 0; lastx < WIDTH; lastx++)
             ttypixel(lastx, lasty, color.bg, fb);
 }
 
