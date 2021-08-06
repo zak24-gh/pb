@@ -136,16 +136,9 @@ int kprintf(multiboot_info_t* mbi, const char* restrict format, ...)
         {
             format++;
             double flvalue = va_arg(args, double);
-
             int64_t value = abs(flvalue) * (double) ipow(10, 8);
-
             bool isneg = (flvalue < 0);
-
             int ratio = (int) (ipow(10, 8) / value);
-
-            if (ratio % 10 == 0)
-                ratio -= 1;
-
             int offset = 0;
 
             if (ratio > 1)
@@ -216,10 +209,8 @@ int kprintf(multiboot_info_t* mbi, const char* restrict format, ...)
         {
             format++;
             int value = va_arg(args, int);
-
             char buf[32] = {[31] = 0};
             int i = 30;
-
             bool isneg = (value < 0);
 
             if (isneg)
