@@ -54,7 +54,7 @@ double nrt(double x, double n)
 	if (x < 0)
 		return -1;
 
-    /* This algorithm can produce square roots within an accuracy
+    /* This algorithm can produce nth roots within an accuracy
     range of a predefined constant epsilon. (As of 0.0.0.9) this
     could be useful for some exponents under 1; however, this has
     not been tested yet. */
@@ -156,5 +156,12 @@ double pow(double x, double y)
 {
     /* Returns x^y in manner using exp() and ln() functions. Currently only
     guaranteed to work for x- and y-values greater than 1. */
-    return exp(y * ln(x));
+    if (y >= 1)
+        return exp(y * ln(x));
+    else if (y <= -1)
+        return 1 / exp(-y * ln(x));
+    else if (!y)
+        return 1;
+    else
+        return -1;
 }
