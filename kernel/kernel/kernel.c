@@ -21,6 +21,6 @@ void kmain(unsigned long mb_mag, unsigned long mb_addr)
 
     // Default colors: fg = 0xAAAAAA, bg = 0x000000
     // Test message
-    kprintf(mbi, "\"Project Bumblebee\" Version 0.0.0.9\n");
-    kprintf(mbi, "\nLogin placeholder. More sufficient comments now added.\n\n");
+    kprintf(mbi, "\"Project Bumblebee\" Version 0.0.0.10\n");
+    kprintf(mbi, "\nLogin placeholder. Now supports negative exponents.\n\n");
 }
