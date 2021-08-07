@@ -154,8 +154,7 @@ double exp(double x)
 
 double pow(double x, double y)
 {
-    /* Returns x^y in manner using exp() and ln() functions. Currently only
-    guaranteed to work for x- and y-values greater than 1. */
+    // Returns x^y in manner using exp() and ln() functions. Experimental.
     if (y >= 1)
         return exp(y * ln(x));
     else if (y <= -1)
